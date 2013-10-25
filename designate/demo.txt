@@ -1,0 +1,71 @@
+Designate Demo Examples
+
+
+# List domains:
+
+curl \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+http://ns1.raxdns.com:9001/v1/domains
+
+
+# Create a domain:
+
+curl \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-X POST \
+-d '{ "name": "sisk1.com.", "ttl": 3600, "email": "mike.sisk@rackspace.com" }' \
+http://ns1.raxdns.com:9001/v1/domains
+
+
+# Create an A record:
+
+curl \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-X POST \
+-d '{"name":"sisk1.com.","type":"A","data":"127.0.0.1"}' \
+http://ns1.raxdns.com:9001/v1/domains/domain_id/records
+
+
+# Create a CNAME record:
+
+curl \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-X POST \
+-d '{"name":"www.sisk1.com.","type":"CNAME","data":"sisk1.com."}' \
+http://ns1.raxdns.com:9001/v1/domains/domain_id/records
+
+
+# List domain records:
+
+curl \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+http://ns1.raxdns.com:9001/v1/domains/domain_id/records
+
+
+# Update the IP address:
+
+curl \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-X PUT \
+-d '{"name":"sisk1.com.","type":"A","data":"192.168.1.2"}' \
+http://ns1.raxdns.com:9001/v1/domains/domain_id/records/record_id
+
+
+# Lookup the CNAME though the DNS server
+
+host www.sisk1.com ns1.raxdns.com
+
+# Delete a Domain
+
+curl \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-X DELETE \
+http://ns1.raxdns.com:9001/v1/domains/domain_id
+

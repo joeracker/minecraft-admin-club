@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->  <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	
+	<title>Openstack DNSaaS: Introducing Designate</title>
+	
+	<meta name="description" content="An introduction to using Openstack DNSaaS.">
+	<meta name="author" content="Mike Sisk">
+	<meta name="viewport" content="width=1024, user-scalable=no">
+	
+	<!-- Core and extension CSS files -->
+	<link rel="stylesheet" href="../core/deck.core.css">
+	<link rel="stylesheet" href="../extensions/goto/deck.goto.css">
+	<link rel="stylesheet" href="../extensions/menu/deck.menu.css">
+	<link rel="stylesheet" href="../extensions/navigation/deck.navigation.css">
+	<link rel="stylesheet" href="../extensions/status/deck.status.css">
+	<link rel="stylesheet" href="../extensions/hash/deck.hash.css">
+	<link rel="stylesheet" href="../extensions/scale/deck.scale.css">
+	
+	<!-- Style theme. More available in /themes/style/ or create your own. -->
+	<link rel="stylesheet" href="../themes/style/swiss.css">
+	
+	<!-- Transition theme. More available in /themes/transition/ or create your own. -->
+	<link rel="stylesheet" href="../themes/transition/horizontal-slide.css">
+	
+	<script src="../modernizr.custom.js"></script>
+	<style>
+	div img.rax{
+		position: absolute;
+		bottom: 100px;
+		right: 100px;
+	}
+	#title h1 {
+		position: static !important;
+	}
+	#title h2 {
+		padding: 200px 0px 0px 0px;
+		font-size: 4em;
+		color: #000 !important;
+		border-bottom: 0px;
+	}
+	#title h3 {
+		color: #c00;
+		padding-top: 0px;
+	}
+	</style>
+</head>
+
+<body class="deck-container">
+
+<!-- Begin slides -->
+<section class="slide" id="title">
+	<h2>Openstack DNSaaS</h2>
+	<h3>Introducing Designate</h3>
+	<p>Emmanuel Ankutse<br>
+		Rackspace Cloud DNS Team</p>
+	<div><img src="rax.png" class="rax"></div>
+</section>
+
+<section class="slide" id="about-dns">
+	<h2>About DNS</h2>
+	<ul>
+		<li>The telephone book of the Internet</li>
+		<li>Distributed</li>
+		<li>Asynchronous</li>
+	</ul>
+</section>
+
+<section class="slide" id="rax-dns">
+	<h2>Rackspace DNS</h2>
+	<ul>
+		<li>1.65 million zones</li>
+		<li>15.70 million records</li>
+		<li>Anycast Network</li>
+		<li>Nameservers announced from <br />DFW, IAD, ORD, and LON DCs<br /> HKG and SYD soon</li>
+		<li>Public REST API</li>
+	</ul>
+</section>
+
+<section class="slide" id="rax-api">
+	<h2>Rackspace Cloud DNS (API)</h2>
+	<ul>
+		<li>Launched October 2011</li>
+		<li>Used to manage Cloud zones and records</li>
+		<li>2nd most popular feature in our <br />control panel behind Cloud Servers</li>
+		<li>Usage has doubled since January 2013</li>
+	</ul>
+</section>
+
+<section class="slide" id="99.999">
+	<h2>API Uptime</h2>
+	<h1>99.999%</h1>
+</section>
+
+<section class="slide" id="more">
+	<h2>It's been good, but we want more!</h2>
+	<ul>
+		<li>More features</li>
+		<li>Faster development</li>
+		<li>Simpler deployments</li>
+	</ul>
+</section>
+
+<section class="slide" id="what-next">
+	<h2>What next?</h2>
+	<ul>
+		<li class="slide">Centralize ownership</li>
+		<li class="slide">Greenfield</li>
+		<li class="slide">Or.... </li>
+	</ul>
+	<p class="slide">...adopt Designate (The DNSaaS formerly known as "Moniker")</p>
+</section>
+
+<section class="slide" id="history">
+	<h2>Designate History</h2>
+	<ul>
+		<li>Started by HP in 2012</li>
+		<li>Incubation in 2013 (cross your fingers!)</li>
+		<li>In production as HP Cloud DNS</li>
+	</ul>
+</section>
+
+<section class="slide" id="features">
+	<h2>Designate Features</h2>
+	<ul>
+		<li>Provides DNS services and an API</li>
+		<li>Provides authoritative DNS resolution</li>
+		<li>Very modular</li>
+		<li>Integrated with other OpenStack components</li>
+	</ul>
+</section>
+
+<section class="slide" id="architecture">
+	<h2>Architecture</h2>
+	<img width="640" height="480" src="arch.png">
+</section>
+
+<section class="slide" id="overview">
+	<h2>Architecture Overview</h2>
+	<ul>
+		<li>
+			<h3>designate-api</h3>
+			<ul>
+				<li>API frontend</li>
+				<li>Based on Oslo-WSGI + Flask</li>
+			</ul>
+		</li>
+		<li>
+			<h3>designate-central</h3>
+			<ul>
+				<li>Core business logic</li>
+				<li>Only piece that talks to the database</li>
+			</ul>
+		</li>
+	</ul>
+</section>
+
+<section class="slide" id="overview-cont">
+	<h2>Architecture Overview (Cont...)</h2>
+	<ul>
+		<li>
+			<h3>Pluggable Storage</h3>
+			<ul>
+				<li>Interface to Database</li>
+				<li>Uses SQLAlchemy</li>
+				<ul>
+					<li>SQLite</li>
+					<li>MySQL</li>
+				</ul>
+			</ul>
+		</li>
+		<li>
+			<h3>Pluggable Backends</h3>
+			<ul>
+				<li>Interface to DNS servers</li>
+				<li>Implementations for:</li>
+				<ul>
+					<li>PowerDNS</li>
+					<li>Bind 9</li>
+				</ul>
+			</ul>
+		</li>
+	</ul>
+</section>
+
+<section class="slide" id="the-future">
+	<h2>The Future</h2>
+	<ul>
+		<li>V2 API</li>
+		<li>DNSSEC</li>
+		<li>Failover</li>
+		<li>OpenStack Incubation</li>
+		<li>Improved Bind support</li>
+	</ul>
+</section>
+
+<section class="slide" id="the-future-for-rax">
+	<h2>It's good for us!</h2>
+	<ul>
+		<li>Consolidates and simplifies our architecture/deployment</li>
+		<li>Compatible with Openstack</li>
+		<li>Opensource</li>
+		<li>Dogfood!</li>
+	</ul>
+</section>
+
+<section class="slide" id="demo">
+	<h2>Demo</h2>
+</section>
+
+<section class="slide" id="qanda">
+	<h2>Q&A</h2>
+	<ul>
+		<p>Project: <a href="http://launchpad.net/designate">https://launchpad.net/designate</a></p>
+		<p>IRC: freenode.net#openstack-dns</p>
+		<p>Code: <a href="https://github.com/stackforge/designate">http://github.com/stackforge/designate</a></p>
+		<p>Docs: <a href="http://designate.readthedocs.org">http://designate.readthedocs.org</a></p>
+	</ul>
+	<p>&nbsp;</p>
+	<img class="rax" src="rax.png" >
+</section>
+
+<!-- deck.navigation snippet -->
+<a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+<a href="#" class="deck-next-link" title="Next">&#8594;</a>
+
+<!-- deck.status snippet -->
+<p class="deck-status">
+	<span class="deck-status-current"></span>
+	/
+	<span class="deck-status-total"></span>
+</p>
+
+<!-- deck.goto snippet -->
+<form action="." method="get" class="goto-form">
+	<label for="goto-slide">Go to slide:</label>
+	<input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+	<datalist id="goto-datalist"></datalist>
+	<input type="submit" value="Go">
+</form>
+
+<!-- deck.hash snippet -->
+<a href="." title="Permalink to this slide" class="deck-permalink">#</a>
+
+
+<!-- Grab CDN jQuery, with a protocol relative URL; fall back to local if offline -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../jquery-1.7.2.min.js"><\/script>')</script>
+
+<!-- Deck Core and extensions -->
+<script src="../core/deck.core.js"></script>
+<script src="../extensions/hash/deck.hash.js"></script>
+<script src="../extensions/menu/deck.menu.js"></script>
+<script src="../extensions/goto/deck.goto.js"></script>
+<script src="../extensions/status/deck.status.js"></script>
+<script src="../extensions/navigation/deck.navigation.js"></script>
+<script src="../extensions/scale/deck.scale.js"></script>
+
+<!-- Initialize the deck -->
+<script>
+$(function() {
+	$.deck('.slide');
+});
+</script>
+
+</body>
+</html>
